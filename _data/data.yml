@@ -1,0 +1,173 @@
+#
+# Be aware that even a small syntax error here can lead to failures in output.
+#
+
+sidebar:
+    about: False # set to False or comment line if you want to remove the "how to use?" in the sidebar
+    education: True # set to False if you want education in main section instead of in sidebar
+
+    # Profile information
+    name: Verschaeve Dries
+    tagline: Cloud solution architect
+    avatar: 0.jpg  #place a 100x100 picture inside /assets/images/ folder and provide the name of the file below
+
+    # Sidebar links
+    email: dries.verschaeve@vddesign.be
+    phone: #012 345 6789
+    website: www.vddesign.be #do not add http://
+    linkedin: driesverschaeve
+    github: dVerschaeve
+    gitlab:
+    bitbucket:
+    twitter: '@driesverschaeve'
+    stack-overflow: # Number/Username, e.g. 123456/alandoe
+    codewars:
+    goodreads: # Number-Username, e.g. 123456-alandoe
+
+    languages:
+      - idiom: Dutch
+        level: Native
+
+      - idiom: English
+        level: Professional
+
+      - idiom: French
+        level: Professional
+      
+      - idiom: German
+        level: Beginner
+
+    interests:
+      - item: Family
+        link:
+
+      - item: Home Automation
+        link:
+
+      - item: BBQ
+        link:
+      
+      - item: Travel
+        link:
+      
+      - item: Hiking
+        link:
+
+      - item: Photography
+        link:
+career-profile:
+    title: Career Profile
+    summary: |
+      I'm an eager to learn solution architect specialized in cloud technology working for Hewlett Packard Enterprise. 
+      
+      During my career at HPE, I worked on several large digital workplace projects that allowed me to grow towards an architect role. 
+      Implementing cloud services is a popular trend on the current business market where companies often encounter unforeseen challenges and pitfalls.
+      
+      Guiding and acting as a trusted advisor allows me to help customers in their journey towards a successful implementation of cloud technologies.
+education:
+    - degree: Bachelor Multimedia and Communication Technologies
+      university: PIH Kortrijk 
+      time: 2001 - 2005
+      details: |
+        
+experiences:
+    - role: Solution Architect
+      time: Feb 2014 - Present
+      company: Hewlett Packard Enterprise
+      details: |
+        Technology Consultant focusing on digital workplace assignments based on Office 365 and Azure Active Directory.
+
+        During my last assignments, I’ve been focusing on the following areas:
+          - Office 365 infrastructure (Active Directory Federation Services, Azure AD Connect, ...)
+          - Azure Active Directory Premium implementations
+          - Azure IaaS solutions
+          - Exchange On-premises to Exchange Online migrations
+          - Lotus Notes to Exchange online migrations
+          - OneDrive for Business deployments
+          - Enterprise Mobility Suite
+          - Workplace assessment projects
+        
+        Roles vary from Subject Matter Expert, consultant and architect to successfully complete HPE customer projects. When not doing delivery activities, I assist in pre-sales activities for our customers.
+    - role: Technology Consultant
+      time: 2006 - 2014
+      company: Hewlett-Packard CDS
+      details: |
+        Technical Consultant for Hewlett-Packard's Technology Services Consulting division.
+
+        In my role, I was a Subject matter expert for:
+        - Office 365 implementation projects
+        - Exchange server implementation projects
+        - Lync Server implementation projects
+        - PowerShell scripting
+
+projects:
+    title: Projects
+    intro: >
+      You can list your side projects or open source libraries in this
+      section. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      Vestibulum et ligula in nunc bibendum fringilla a eu lectus.
+    assignments:
+      - title: Velocity
+        link: "#hook"
+        tagline: "A responsive website template designed to help startups promote, market and sell their products."
+
+      - title: DevStudio
+        link: "#"
+        tagline: "A responsive website template designed to help web developers/designers market their services."
+
+      - title: Tempo
+        link: "#"
+        tagline: "A responsive website template designed to help startups promote their products or services and to attract users &amp; investors"
+
+      - title: Atom
+        link: "#"
+        tagline: "A comprehensive website template solution for startups/developers to market their mobile apps."
+
+      - title: Delta
+        link: "#"
+        tagline: "A responsive Bootstrap one page theme designed to help app developers promote their mobile apps"
+
+publications:
+    title: Publications
+    intro: |
+      You can list your publications in this section. Lorem ipsum dolor sit
+      amet, consectetur adipiscing elit. Vestibulum et ligula in nunc
+      bibendum fringilla a eu lectus.
+    papers:
+      - title: The Art of Computer Programming
+        link: "#"
+        authors: Donald E. Knuth
+        conference: Addison-Wesley, 1968
+
+      - title: "Genetic Programming III: Darwinian Invention &amp; Problem Solving"
+        link: "#"
+        authors: Koza, J.R., Andre, D., Bennett, F.H., Keane, M.A.
+        conference: "Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 1st edn. (1999)"
+
+      - title: A syntax directed compiler for Algol 60
+        link: "#"
+        authors: Edgar T. Irons
+        conference: "Comm. ACM 4 (1961), 51–55"
+
+skills:
+    title: Skills &amp; Proficiency
+
+    toolset:
+      - name: Cloud architecture 
+        level: 80%
+
+      - name: Microsoft 365 
+        level: 95%
+
+      - name: Azure Services
+        level: 75%
+
+      - name: Identity and Access management  
+        level: 80%
+
+      - name: Exchange Messaging 
+        level: 95%
+
+
+footer: >
+    
