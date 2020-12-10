@@ -16,23 +16,36 @@
   </div><!--//intro-->
   {% endif %}
 
-  {% for project in projects.assignments %}
-    <div class="item">
 
-      <span class="project-title">
-        {% if project.link %}
-        <a href="{{ project.link }}" target="_blank">{{ project.title }}</a>
-        {% else %}
-        {{ project.title }}
-        {% endif %}
+  {% for project in projects.detailed %}
+  <div class="item">
+
+    <div>
+      <span class="project-title ">
+        {{ project.role }} - {{ project.sector }}<br>
+        {{ project.period }}
       </span>
+    </div>
 
-      {% if project.tagline %}
-      - <span class="project-tagline">{{ project.tagline }}</span>
-      {% endif %}
+    <span class="project-tagline">Scope of the project</span>
+    <ul>
+      {% for scope in project.scope %}
+        <li>{{ scope }}</li>
+      {% endfor %}
+    </ul>
+  
+    <span class="project-tagline">Achievements </span>
+    <ul>
+      {% for achievement in project.achievements %}
+        <li>{{ achievement }}</li>
+      {% endfor %}
+    </ul>
 
-    </div><!--//item-->
-  {% endfor %}
+  </div><!--//item-->
+  <div class="item-separator">
+    <hr />
+  </div>
+{% endfor %}
 
 </section><!--//section-->
 {% endif %}

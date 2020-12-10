@@ -272,3 +272,13 @@ p {
     }
 
 }
+
+.item-seperator {
+    display: flex;
+    align-items: center;
+}
+
+.item-separator hr {
+    width: 50%;
+}
+  

@@ -55,12 +55,20 @@ sidebar:
 
       - item: Photography
         link:
+    
+    certifications:
+      - item: "Microsoft Certified: Azure Solutions Architect Expert"
+        date: "November 20, 2020"
+      - item: "Microsoft Certified Solutions Associate: Office 365"
+        date: "December 16, 2014"
+      
+
 career-profile:
     title: Career Profile
     summary: |
       I'm an eager to learn solution architect specialized in cloud technology working for Hewlett Packard Enterprise. 
       
-      During my career at HPE, I worked on several large digital workplace projects that allowed me to grow towards an architect role. 
+      During my career at HPE, I worked on several large projects that allowed me to grow towards an architect role. 
       Implementing cloud services is a popular trend on the current business market where companies often encounter unforeseen challenges and pitfalls.
       
       Guiding and acting as a trusted advisor allows me to help customers in their journey towards a successful implementation of cloud technologies.
@@ -75,17 +83,18 @@ experiences:
       time: Feb 2014 - Present
       company: Hewlett Packard Enterprise
       details: |
-        Technology Consultant focusing on digital workplace assignments based on Office 365 and Azure Active Directory.
+        Technology Consultant focusing on cloud technologies such as Microsoft 365, Azure Active Directory and Microsoft Azure.
 
         During my last assignments, I’ve been focusing on the following areas:
-          - Office 365 infrastructure (Active Directory Federation Services, Azure AD Connect, ...)
+          - Microsoft 365 infrastructure (Active Directory Federation Services, Azure AD Connect, ...)
           - Azure Active Directory Premium implementations
-          - Azure IaaS solutions
+          - Designing Azure solutions
           - Exchange On-premises to Exchange Online migrations
           - Lotus Notes to Exchange online migrations
           - OneDrive for Business deployments
           - Enterprise Mobility Suite
           - Workplace assessment projects
+          - Cloud transformation projects
         
         Roles vary from Subject Matter Expert, consultant and architect to successfully complete HPE customer projects. When not doing delivery activities, I assist in pre-sales activities for our customers.
     - role: Technology Consultant
@@ -103,30 +112,75 @@ experiences:
 projects:
     title: Projects
     intro: >
-      You can list your side projects or open source libraries in this
-      section. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-      Vestibulum et ligula in nunc bibendum fringilla a eu lectus.
-    assignments:
-      - title: Velocity
-        link: "#hook"
-        tagline: "A responsive website template designed to help startups promote, market and sell their products."
-
-      - title: DevStudio
-        link: "#"
-        tagline: "A responsive website template designed to help web developers/designers market their services."
-
-      - title: Tempo
-        link: "#"
-        tagline: "A responsive website template designed to help startups promote their products or services and to attract users &amp; investors"
-
-      - title: Atom
-        link: "#"
-        tagline: "A comprehensive website template solution for startups/developers to market their mobile apps."
-
-      - title: Delta
-        link: "#"
-        tagline: "A responsive Bootstrap one page theme designed to help app developers promote their mobile apps"
-
+      During my career, I already completed many projects. Herunder is a small overview of several projects I was involved with:
+    detailed:
+        - role: "Solution architect"
+          sector: "Telecommunications"
+          period: "From 06/2020 -  Current"
+          scope: 
+            - Lead technical design workshops
+            - Design Microsoft Teams Tenant and conferencing
+            - Design Microsoft Teams Enterprise Voice
+            - Study and recommendations to replace CISCO conferencing equipment with Teams native equipment
+            - Follow up on implementation by customers technical teams
+          achievements :
+            - Designed a architecture to transition Skype for Business users towards Microsoft Teams without the possibility to establish a hybrid mode.
+            - Designed an direct routing enterprise voice architecture with central SBC’s in Belgium that supports remote offices across the globe. The solution was capable of routing voice calls towards Skype for Business or  Microsoft Teams depending on which platform the user was activate.
+            - Successfully proposed Teams native equipment to replace their rented CISCO ISV equipment.
+        - role: "Solution architect"
+          sector: "Telecommunications"
+          period: "From 02/2019 - Current"
+          scope: 
+            - Design the Office 365 core components
+            - Design on-premises Exchange 2016 in hybrid mode with Exchange Online
+            - Design Domino coexistence with Exchange using Binary Tree Tooling
+            - Design Mailbox migration from a Domino messaging system towards Exchange Online using Microsoft FastTrack
+            - Design Azure Infrastructure to support migration out of scope for Microsoft FastTrack
+            - Supporting system engineers to implement the solution
+          achievements :
+            - The infrastructure was designed for 8000 users and complied with strong security and compliance requirements. 
+            - The infrastructure was designed, deployed and validated in a relative short period (8-months) as projects usually take much longer to roll-out. 
+            - All 8000 mailboxes were migrated in a 3-month period. 
+        - role: "Solution architect"
+          sector: "Pharmaceutical"
+          period: "From 04/2020 – 07/2020"
+          scope: 
+            - Design an Azure cloud to enable Site Disaster Recovery
+          achievements :
+            - The designed architeture consists of a shared services layer that currently foresees network connectivity, monitoring and encryption services.  Next to the shared services,  a disaster recovery solution has been enabled on the platform to proof the value of cloud services towards internal management. The solution was developed and deployed in an iterative process under two months.
+        - role: "Solution architect"
+          sector: "Telecommunications"
+          period: "From 10/2018 -  To 09/2019"
+          scope: 
+            - Lead technical design workshops
+            - Design Identity synchronization for multiple tenants
+            - Design Exchange 2016 hybrid with multiple tenants
+            - Presented design to Microsoft to achieve support statement
+            - Supported deployment into production
+          achievements :
+            - Approximate 30 000 mailboxes reside in the different environments, all mailboxes are able to send/receive email and lookup calendar information regardless of their location.
+            - The solution got a supportability statement by Microsoft as multi Office 365 environments are not supported by Microsoft. 
+        - role: "Solution architect"
+          sector: "Space Industry"
+          period: "From 11/2017 - To 05/2019"
+          scope: 
+            - Design for O365 tenant, authentication, Skype for Business Online, Exchange Online & OneDrive for Business
+            - Exchange Online coexistence design and migration design for a Domino messaging system using Azure infrastructure.
+            - Exchange Online coexistence design and migration design for other Office 365 tenants
+            - Implementation and mailbox migration design
+          achievements :
+            - Designed and implemented a complex directory synchronization for 5000 users that took into account the Domino messaging system and other Office 365 tenants.
+            - As the customer operates in the space industry, the solution was designed to comply with all security and regulatory requirements.  
+            - The mailbox migration was finished under 4 months
+        - role: "Solution architect"
+          sector: "Public Service Provider"
+          period: "From 05/2017 - To 07/2017"
+          scope: 
+            - Conduct workshops to gather requirements for the new digital workplace
+            - Define a vision, strategy, concept and roadmap for a new digital workplace
+          achievements :
+            - We helped the customer define a long term roadmap to implement a new digital workplace and presented it to the management. 
+            - The outcome of the project helped the customer to define small projects and prioritize them to achieve their overall vision. 
 publications:
     title: Publications
     intro: |
