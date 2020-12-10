@@ -47,6 +47,9 @@ sidebar:
       - item: BBQ
         link:
       
+      - item: Cooking
+        link:
+      
       - item: Travel
         link:
       
@@ -86,17 +89,20 @@ experiences:
         Technology Consultant focusing on cloud technologies such as Microsoft 365, Azure Active Directory and Microsoft Azure.
 
         During my last assignments, I’ve been focusing on the following areas:
-          - Microsoft 365 infrastructure (Active Directory Federation Services, Azure AD Connect, ...)
-          - Azure Active Directory Premium implementations
-          - Designing Azure solutions
-          - Exchange On-premises to Exchange Online migrations
-          - Lotus Notes to Exchange online migrations
-          - OneDrive for Business deployments
-          - Enterprise Mobility Suite
+          - Microsoft 365
+          - Identity and Access Management
+          - Active Directory Federation Services
+          - Azure Architecture
+          - Exchange Architecture & Migrations
+            - Exchange On-premises to Exchange Online migrations
+            - Lotus Notes to Exchange online migrations
           - Workplace assessment projects
           - Cloud transformation projects
+          - Automation
+          - Infrastructure as code
         
-        Roles vary from Subject Matter Expert, consultant and architect to successfully complete HPE customer projects. When not doing delivery activities, I assist in pre-sales activities for our customers.
+        Roles vary from Subject Matter Expert, consultant and architect to successfully complete HPE customer projects. When not doing delivery activities, I assist in pre-sales activities or work on internal initiatives.
+
     - role: Technology Consultant
       time: 2006 - 2014
       company: Hewlett-Packard CDS
@@ -112,7 +118,7 @@ experiences:
 projects:
     title: Projects
     intro: >
-      The list of projects I worked on is already very long, herunder a small overview of the most recent projects I was involved with:
+      The list of projects I've worked on is already very long, herunder a small overview of the most recent projects I was involved with:
     detailed:
         - role: "Solution architect"
           sector: "Telecommunications"
@@ -148,7 +154,7 @@ projects:
           scope: 
             - Design an Azure cloud to enable Site Disaster Recovery
           achievements :
-            - The designed architeture consists of a shared services layer that currently foresees network connectivity, monitoring and encryption services.  Next to the shared services,  a disaster recovery solution has been enabled on the platform to proof the value of cloud services towards internal management. The solution was developed and deployed in an iterative process under two months.
+            - The designed architecture consists of a shared services layer that currently foresees network connectivity, monitoring and encryption services.  Next to the shared services,  a disaster recovery solution has been enabled on the platform to proof the value of cloud services towards internal management. The solution was developed and deployed in an iterative process under two months.
         - role: "Solution architect"
           sector: "Telecommunications"
           period: "From 10/2018 -  To 09/2019"
@@ -160,7 +166,7 @@ projects:
             - Supported deployment into production
           achievements :
             - Approximate 30 000 mailboxes reside in the different environments, all mailboxes are able to send/receive email and lookup calendar information regardless of their location.
-            - The solution got a supportability statement by Microsoft as multi Office 365 environments are not supported by Microsoft. 
+            - The solution got a supportability statement by Microsoft as multi Office 365 environments were not yet supported by Microsoft. 
         - role: "Solution architect"
           sector: "Space Industry"
           period: "From 11/2017 - To 05/2019"
@@ -185,24 +191,12 @@ projects:
 publications:
     title: Publications
     intro: |
-      You can list your publications in this section. Lorem ipsum dolor sit
-      amet, consectetur adipiscing elit. Vestibulum et ligula in nunc
-      bibendum fringilla a eu lectus.
+      None
     papers:
-      - title: The Art of Computer Programming
-        link: "#"
-        authors: Donald E. Knuth
-        conference: Addison-Wesley, 1968
-
-      - title: "Genetic Programming III: Darwinian Invention &amp; Problem Solving"
-        link: "#"
-        authors: Koza, J.R., Andre, D., Bennett, F.H., Keane, M.A.
-        conference: "Morgan Kaufmann Publishers Inc., San Francisco, CA, USA, 1st edn. (1999)"
-
-      - title: A syntax directed compiler for Algol 60
-        link: "#"
-        authors: Edgar T. Irons
-        conference: "Comm. ACM 4 (1961), 51–55"
+      - title: ""
+        link: ""
+        authors: ""
+        conference: ""
 
 skills:
     title: Skills &amp; Proficiency
@@ -214,7 +208,7 @@ skills:
       - name: Microsoft 365 
         level: 95%
 
-      - name: Azure Services
+      - name: Azure Architecture & Services
         level: 75%
 
       - name: Identity and Access management  
@@ -225,4 +219,4 @@ skills:
 
 
 footer: >
-    
+    Created in Jekyll - Hosted on Github pages
