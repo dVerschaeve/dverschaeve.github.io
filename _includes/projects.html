@@ -20,12 +20,18 @@
   {% for project in projects.detailed %}
   <div class="item">
 
-    <div>
-      <span class="project-title ">
-        {{ project.role }} - {{ project.sector }}<br>
-        {{ project.period }}
-      </span>
+    <div class="meta">
+
+      <div class="upper-row">
+        <h3 class="job-title">{{ project.role }}</h3>
+        <div class="time">{{ project.period }}</div>
+      </div><!--//upper-row-->
+
+      <div class="company">{{ project.sector }}</div>
+
     </div>
+
+
 
     <span class="project-tagline">Scope of the project</span>
     <ul>
