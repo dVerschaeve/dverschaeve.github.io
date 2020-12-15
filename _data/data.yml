@@ -177,6 +177,7 @@ projects:
             - Implementation and mailbox migration design
           achievements :
             - Designed and implemented a complex directory synchronization for 5000 users that took into account the Domino messaging system and other Office 365 tenants.
+            - Deployed Azure Infrastructure that was connected towards the on-premises network to allow mailbox migration through Azure.
             - As the customer operates in the space industry, the solution was designed to comply with all security and regulatory requirements.  
             - The mailbox migration was finished under 4 months
         - role: "Solution architect"
