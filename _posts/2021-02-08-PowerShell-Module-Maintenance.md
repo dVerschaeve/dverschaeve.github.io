@@ -23,7 +23,7 @@ We now have a way to find modules and which version is available, so we can inst
 ```powershell
 Install-Module -Name 'ModuleName' 
 ```
-Whith the above command, you migt get prompted to trust the repository. You can suppress this by adding the -Force parameter to the Install-Module command. An essential part when you want to automate this in a script. 
+With the above command, you migt get prompted to trust the repository. You can suppress this by adding the -Force parameter to the Install-Module command. An essential part when you want to automate this in a script. 
 
 ![Install-Module](/assets/posts/20210205-01/Install-Module.png){:class="img-responsive"}
 
