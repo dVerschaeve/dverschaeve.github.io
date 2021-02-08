@@ -38,6 +38,7 @@ chrome_mobile_color: #use hex colors (ex:#1976d2) or leave empty if you don't wa
 # Build settings
 plugins:
   - jekyll-feed
+  - jekyll-paginate
 
 # Sass/SCSS
 sass:
@@ -52,3 +53,6 @@ compress_html: # - http://jch.penibelst.de/
   clippings: all
   ignore:
     envs: development
+
+paginate: 6
+paginate_path: /page:num/

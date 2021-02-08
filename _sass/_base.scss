@@ -36,13 +36,44 @@ p {
     @include box-shadow(0px 2px 4px rgba(0,0,0,0.1));
 }
 
+.navbar {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    background: $theme-color;
+
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      
+      li {
+        float: left;
+      }
+      
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 16px;
+        text-decoration: none;
+      }
+      
+    //   li a:hover {
+    //     background-color: #111111;
+    //   }
+}
+
 .sidebar-wrapper {
     background: $theme-color;
     position: absolute;
     right: 0;
     width: 280px;
     height: 100%;
-    min-height: 800px;
+    min-height: 480px;
     color: #fff;
     a {
         color: #fff;
@@ -157,6 +188,7 @@ p {
     background: #fff;
     padding: 60px;
     padding-right: 340px;
+    min-height: 480px;
     .section-title {
         text-transform: uppercase;
         font-size: 20px;
@@ -282,3 +314,22 @@ p {
     width: 50%;
 }
   
+.pagination a, .pagination span {
+    padding: 7px 18px;
+    border: 1px solid #eee;
+    margin-left: -2px;
+    margin-right: -2px;
+    background-color: #ffffff;
+    display: inline-block;
+  }
+
+.pagination a {    
+    &:hover {
+        background-color: #f1f1f1;
+        color: #333;
+    }
+ }
+
+.pagination {
+    text-align: center;
+ }
