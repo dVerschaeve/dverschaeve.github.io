@@ -33,3 +33,5 @@ compress_html: # - http://jch.penibelst.de/
 
 paginate: 6
 paginate_path: /page:num/
+
+analytics: true
