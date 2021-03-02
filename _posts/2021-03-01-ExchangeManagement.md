@@ -17,25 +17,28 @@ Before we dive into the Azure Function, we first need to ensure that all the req
 All journey's start somewhere and in this case we first need to do create an Azure KeyVault using Azure Cloud Shell:
 
 ```CLI 
-az group create --name "RG-AzureFunctionDemo" -l "EuropeWest"
-az keyvault create --name "kvvddesignlab1234" --resource-group "RG-AzureFunctionDemo" --location "EuropeWest"
+az group create --name "RG-AzureFunctionDemo" -l "westeurope"
+az keyvault create --name "kvvddesignlab1234" --resource-group "RG-AzureFunctionDemo" --location "westeurope"
 ```
 
-The outcome of these commands is that an Azure Key Vault is created inside a resource group. When an Azure Key vault is created, you don't automatically gain the abilitiy to view and manage secrets inside the vault. To ensure our user ID can generate a certificate, we have to create an Access Policy that allows us the list certificates, retreive certificates and the ability to create certificates by executing the following CLI commands in Azure Cloud Shell:
+The outcome of these commands is that an Azure Key Vault is created inside a resource group. When an Azure Key vault is created with above commend, you are automatically assigned an access policy that allows you to manage secrets inside the Keyvault. At this point we are ready to generate the certificate that will be used to authenticate against Exchange Online. For this purpose, we can generate a self-signed certificate inside KeyVault going to our KeyVault resource in the Azure Portal (portal.azure.com > Resource Groups > YourResourceGroup > YourKeyVaultName > Certificates > Generate / Import). For this example, I used the following settings:
 
-```
-export VAR_AZURE_USERID=$(az ad user show --id <Current Logged On User>)
-az keyvault set-policy --name kvvddesignlab1234 --object-id $VAR_AZURE_USERID --certificate-permissions list get create
-```
+* Name: ExchangeOnlineManagement
+* Common Name: CN=ExchangeOnlineManagement
+* Content Type: PKCS #12
+* Lifetime action type: E-mail all contacts at a given percentage lifetime
 
-At this point we are ready to generate the certificate that will be used to authenticate against Exchange Online. For this purpose, we can generate a self-signed certificate inside KeyVault using by executing the following commands in Azure Cloud Shell:
+![Create Certificate](/assets/posts/20210302-02/CreateExchangeOnlineCertificate.png){:class="img-responsive"}
 
-```
-az keyvault certificate create --vault-name "kvvddesignlab1234" -n ExchangeOnlineManagement -p "$(az keyvault certificate get-default-policy)"
-```
+We need the public portion of the certificate, so we need to download it by executing the following command:
 
 
 ## Prepare Azure Active Directory
+Time to move on towards preparing Azure Active Directory where an app registration must be done that will be used to authenticate unattended against the Exchange Online management endpoints. 
+
+```CLI 
+az ad app create --display-name AZF-ExchangeOnlineMGT --native-app
+```
 
 ## 
 
