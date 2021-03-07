@@ -31,6 +31,9 @@ The outcome of these commands is that an Azure Key Vault is created inside a res
 ![Create Certificate](/assets/posts/20210302-02/CreateExchangeOnlineCertificate.png){:class="img-responsive"}
 
 We need the public portion of the certificate, so we need to download it by executing the following command:
+```
+az keyvault certificate download --vault-name kvvddesignlab1234 -n ExchangeOnlineManagement -f cert.crt -e DER
+```
 
 
 ## Prepare Azure Active Directory
@@ -38,16 +41,30 @@ Time to move on towards preparing Azure Active Directory where an app registrati
 
 ```CLI 
 az ad app create --display-name AZF-ExchangeOnlineMGT --native-app
+
+```
+Once the command is executed, we need to upload the public portion of our certificate towards the App registrations "SectionToBeAdded" so that we can authenticate using the generated certificate. You can do this by going to the certificate section on your app registration Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Certificates & secrets and click the "Upload Certificate" button where you select the certificate cert.crt file downloaded in the previous step.
+![Create Certificate](/assets/posts/20210302-02/UploadCertificate.png){:class="img-responsive"}
+
+
+The next configuration is allowing access to the Exchange Online Management API, we can configure this in the "API section" of our app registration. We an do this by changing the app's manifest file. So head over to your Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Manifest and modify the requiredResourceAccess to reflect the following configuration:
+```
+"requiredResourceAccess": [
+   {
+      "resourceAppId": "00000002-0000-0ff1-ce00-000000000000",
+      "resourceAccess": [
+         {
+            "id": "dc50a0fb-09a3-484d-be87-e023b12c6440",
+            "type": "Role"
+         }
+      ]
+   }
+],
 ```
 
-Once the command is executed, we need to upload the public portion of our certificate towards the App registrations "SectionToBeAdded" so that we can authenticate using the generated certificate.
+As this is an application permission, we need to execute an administrative consent before the api permissions are usable. Head over to the API Permissions section of the Azure AD App registration and click the "Grant admin consent for YourDirectory" button. Confirm by clicking "Yes".
+![Create Certificate](/assets/posts/20210302-02/GrantAdminConsent.png){:class="img-responsive"}
 
-
-The next configuration is allowing access to the Exchange Online Management API, we can configure this in the "API section" of our app registration. We require the following API permission to be configured:
-
-<ToBeAdded>
-
-As this is an application permission, we need to execute an administrative consent before the api permissions are usable.
 
 The final step to be done on the app registration, is to add our app registration towards the Exchange Online administrative role in Azure Active Directory.
 
