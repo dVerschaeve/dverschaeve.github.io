@@ -1,57 +1,52 @@
 ---
 layout: post
-title: Exchange Management working title
-excerpt: "ToDo"
-date: 2021-03-01
+title: Azure Function: using a KeyVault certificate to authenticate towards Exchange Online
+excerpt: "In this post, I explain how you can configure a PowerShell based Azure Function to retreive a certificate stored in Azure KeyVault and use it to authenticate with the Exchange Online Management V2 module"
+date: 2021-03-09
 ---
 
-# Introduction
-
-The release of Exchange Management Shell V2.0.4 comes with support for MacOS and Linux. With certificate based authetentication against the Exchange Online management endpoints released in a previous version,  let's have a look how we can leverage dynamic retreival of a certificate from an Azure KeyVault and use it inside an Azure PowerShell function to connect towards Exchange Online to do some automated tasks. This article outlines the setup and discusses some caveats I encountered during the deployment in my lab environment.
-
-# Main Content
+Now that certificate based authentication in Exchange Online management shell reached a certain maturity level, let's have a look how we can leverage dynamic retreival of a certificate from an Azure KeyVault and use it inside an Azure PowerShell function to connect towards Exchange Online to do some automated tasks. This article outlines the setup and discusses some caveats I encountered during the deployment in my lab environment.
 
 Before we dive into the Azure Function, we first need to ensure that all the required components are configured in our environment. This means that we need to have an Azure KeyVault and an app registration inside Azure Active Directory before we can test out inside our Azure Function. *Note: some parts in this article are done using Azure CLI while others are executed manually.*
 
 ## Prepare Azure Key Vault
-All journey's start somewhere and in this case we first need to do create an Azure KeyVault using Azure Cloud Shell:
+All journey's start somewhere and in this case we first need to do create an Azure KeyVault, the quickest way is using Azure CLI. So once signed in using AZ Login, execute the following commands to create a KeyVault:
 
 ```CLI 
 az group create --name "RG-AzureFunctionDemo" -l "westeurope"
 az keyvault create --name "kvvddesignlab1234" --resource-group "RG-AzureFunctionDemo" --location "westeurope"
 ```
 
-The outcome of these commands is that an Azure Key Vault is created inside a resource group. When an Azure Key vault is created with above commend, you are automatically assigned an access policy that allows you to manage secrets inside the Keyvault. At this point we are ready to generate the certificate that will be used to authenticate against Exchange Online. For this purpose, we can generate a self-signed certificate inside KeyVault going to our KeyVault resource in the Azure Portal (portal.azure.com > Resource Groups > YourResourceGroup > YourKeyVaultName > Certificates > Generate / Import). For this example, I used the following settings:
+The outcome of these commands is that an Azure Key Vault is created inside a resource group in Western Europe. When an Azure Key vault is created with above commend, you are automatically assigned an access policy that allows you to manage secrets inside the Keyvault. At this point we are ready to generate the certificate that will be used to authenticate against Exchange Online. For this purpose, we can generate a self-signed certificate inside KeyVault by going to our KeyVault resource in the Azure Portal (portal.azure.com > Resource Groups > YourResourceGroup > YourKeyVaultName > Certificates > Generate / Import). For this example, I used the following settings:
 
-* Name: ExchangeOnlineManagement
+* Name: ExchangeOnlineManagement (we will need this name later on in our Azure Function, so keep a note of it)
 * Common Name: CN=ExchangeOnlineManagement
 * Content Type: PKCS #12
 * Lifetime action type: E-mail all contacts at a given percentage lifetime
 
 ![Create Certificate](/assets/posts/20210302-02/CreateExchangeOnlineCertificate.png){:class="img-responsive"}
 
-We need the public portion of the certificate, so we need to download it by executing the following command:
+We need the public portion of the certificate for our Azure AD app registration process, so we need to download it by executing the following command:
 ```
 az keyvault certificate download --vault-name kvvddesignlab1234 -n ExchangeOnlineManagement -f cert.crt -e DER
 ```
 
-
 ## Prepare Azure Active Directory
-Time to move on towards preparing Azure Active Directory where an app registration must be done that will be used to authenticate unattended against the Exchange Online management endpoints. We start with creating an app registration inside Azure Active Directory by executing the following Azure CLI command:
+Time to move on towards preparing Azure Active Directory where we will create an app registration that will also generate a service principal. The ApplicationID of this app registration is going to be used when making the connection using a certificate. We start with creating an app registration inside Azure Active Directory by executing the following Azure CLI command:
 
 ```CLI 
 az ad app create --display-name AZF-ExchangeOnlineMGT --native-app
 ```
 
-![Create Certificate](/assets/posts/20210302-02/CreateAppRegistration.png){:class="img-responsive"}
+![Create App Registration](/assets/posts/20210302-02/CreateAppRegistration.png){:class="img-responsive"}
 
-Take a note of the appID value, we will need this later on when we authenticate against Exchange Online via PowerShell code.
+Take a note of the appID value, we will need this later on in our Azure Function.
 
-Once the application is created, we need to upload the public portion of our certificate towards the App registrations "Certificate & Secrets" so that we can authenticate using the generated certificate. You can do this by going to the certificate section on your app registration Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Certificates & secrets and click the "Upload Certificate" button where you select the certificate cert.crt file downloaded in the previous step.
-![Create Certificate](/assets/posts/20210302-02/UploadCertificate.png){:class="img-responsive"}
+Once the application is created, we need to upload the public portion of our self-signed certificate towards the App registrations "Certificate & Secrets" so that we can authenticate with the private key of the certificate. You can do this by going to the certificate section on the app registration via Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Certificates & secrets and click the "Upload Certificate" here you provide the cert.crt file that has been downloaded in the previous step.
 
+![Upload Certificate](/assets/posts/20210302-02/UploadCertificate.png){:class="img-responsive"}
 
-The next configuration is allowing access to the Exchange Online Management API, we can configure this in the "API section" of our app registration. We an do this by changing the app's manifest file. So head over to your Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Manifest and modify the requiredResourceAccess to reflect the following configuration:
+The next configuration is allowing access towards the Exchange Online Management API, we can configure this in the "API section" of our app registration. The easiest way is by changing the app's manifest file. (I've tried with Azure CLI, however there seems to be limitation in the CLI that only allows Scopes to be added). So head over to Azure Active Directory management portal > App registrations > All Applications > YourApplicationName > Manifest and modify the requiredResourceAccess to reflect the following configuration:
 ```
 "requiredResourceAccess": [
    {
@@ -67,13 +62,12 @@ The next configuration is allowing access to the Exchange Online Management API,
 ```
 
 As this is an application permission, we need to execute an administrative consent before the api permissions are usable. Head over to the API Permissions section of the Azure AD App registration and click the "Grant admin consent for YourDirectory" button. Confirm by clicking "Yes".
-![Create Certificate](/assets/posts/20210302-02/GrantAdminConsent.png){:class="img-responsive"}
 
+![Grant Admin Consent](/assets/posts/20210302-02/GrantAdminConsent.png){:class="img-responsive"}
 
-The final step to be done on the app registration, is to add our app registration towards the Exchange Online administrative role in Azure Active Directory. We can assign the "Exchange Administrator" role in the "Roles and administrators" blade of Azure Active Directory, so head over to your Azure AD portal > Roles and administrators > Exchange administrator and click the "Add assignments button". Here you search for your created app and add it as an "Exchange Administrator"
-button. Confirm by clicking "Yes".
-![Create Certificate](/assets/posts/20210302-02/ExchangeAdminRoleAssignment.png){:class="img-responsive"}
+The final step to be done on the app registration, is to add our app registration towards the Exchange Online administrative role in Azure Active Directory. We can assign the "Exchange Administrator" role in the "Roles and administrators" blade of Azure Active Directory, so head over to your Azure AD portal > Roles and administrators > Exchange administrator and click the "Add assignments button". Here you search for your created app and add the principal towards the "Exchange Administrator" role.
 
+![Exchange Administrator Role asssignment](/assets/posts/20210302-02/ExchangeAdminRoleAssignment.png){:class="img-responsive"}
 
 ## Azure Function
 We now finally can switch our attentention towards the subject of this blog post, retreiving a certificate from Azure Keyvault an use it to authenticate against Exchange Online inside an Azure Function. So let's start by creating our Azure Function by executing the following Azure CLI commands:
@@ -85,40 +79,43 @@ az storage account create -n savddesignlabexchfa1234 -g RG-AzureFunctionDemo -l 
 # Create Function App
 az functionapp create --consumption-plan-location westeurope --name FA-VddesignlabExchFA1234 --os-type Windows --resource-group RG-AzureFunctionDemo --runtime powershell --storage-account savddesignlabexchfa1234 --functions-version 3
 ```
-Important here is that we use a 64-Bit Azure Function app, this is needed as the Exchange Online modules are compiled for a 64-Bit architecture. A 32-Bit Azure function won't be able to load the Exchange Online V2 management modules. So the very first thing we do on our newly created function app, is to set it to 64 bit by going to the Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Configuration (under Settings) > Tab General Settings, change the platform setting towards "64 Bit" and save the change. This action will restart your function app.
+*With the above commands, we create a storage account in Western Europe an a Function App version 3 that runs PowerShell Core*
 
-![Create Certificate](/assets/posts/20210302-02/FunctionApp64Bit.png){:class="img-responsive"}
+Important for using the Exchange Online management shell is that we use a 64-Bit architecture for the Function app, this is needed as the Exchange Online modules are compiled for a 64-Bit architecture. A 32-Bit Azure function won't be able to load the Exchange Online V2 management modules. So the very first thing we do on our newly created function app, is to set it to 64 bit by going to the Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Configuration (under Settings) > Tab General Settings, change the platform setting towards "64 Bit" and save the change. This action will restart your function app.
 
+![64 Bit Architecture](/assets/posts/20210302-02/FunctionApp64Bit.png){:class="img-responsive"}
 
-To be able to retrieve the certificate from our KeyVault, we first need to ensure that our function app can authenticate itself against Azure KeyVault. The advantage of using an Azure function is that we can assign it an identity and have Azure manage the credentials. For this use case, we are going  to use a system assigned managed identity that is tight towards the lifecycle of our Function App. This implies that when we remove the Function app, the managed identity is also automatically purged. To enable the managed identity, go to Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Identity (under Settings) > Tab System Assigned, change the status to "On" and save the change.
+To be able to retrieve the certificate from our KeyVault, we first need to ensure that our function app can authenticate itself against Azure KeyVault. The advantage of using an Azure function is that we can assign it an identity and have Azure manage the credentials for this idententy. For this use case, we are going  to use a system assigned managed identity that is tight towards the lifecycle of our Function App. This implies that when we remove the Function app, the managed identity is also automatically purged and potential accesses are revoked. To enable the managed identity, go to Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Identity (under Settings) > Tab System Assigned, change the status to "On" and save the change.
 
-![Create Certificate](/assets/posts/20210302-02/SystemAssignedManagedIdentity.png){:class="img-responsive"}
+![Managed Identity](/assets/posts/20210302-02/SystemAssignedManagedIdentity.png){:class="img-responsive"}
 
-The managed identity currently won't be able to retrieve any secrets from our Azure KeyVault as their is no KeyVault access policy defined for our managed identity. To create the access policy, we need to go back to our KeyVault configuration by going to Azure Admin Portal > Resource Groups > YourResourceGroup > YourKeyVaultName >  Access Policies (under Settings). Here we create a new access policy by selecting "+ Add Access Policy" 
+The managed identity currently won't be able to retrieve any secrets from our Azure KeyVault as their is no KeyVault access policy defined for our managed identity. To create the access policy, we need to go back to our KeyVault configuration via Azure Admin Portal > Resource Groups > YourResourceGroup > YourKeyVaultName >  Access Policies (under Settings). Here we create a new access policy that will grant access towards our function app by selecting "+ Add Access Policy" 
 
 To ensure the private key can be retrieved from our KeyVault, we need to select the "Get" and "List" permission under "Secret Permissions":
 
-![Create Certificate](/assets/posts/20210302-02/KeyManagementPermissions.png){:class="img-responsive"}
+![Secret Permissions](/assets/posts/20210302-02/KeyManagementPermissions.png){:class="img-responsive"}
 
 Followed by the "Get" and "List" permission under "Certificate Permissions" to be able to retrieve the certificate:
 
-![Create Certificate](/assets/posts/20210302-02/CertificatePermissions.png){:class="img-responsive"}
+![Certificate Permissions](/assets/posts/20210302-02/CertificatePermissions.png){:class="img-responsive"}
 
-Finally, we need to search for our function app principal to apply the access policy. Search for the name you provided to your function app, select it and click "Add" to create the access policy.
+Finally, we need to search for our function app principal so that we can apply the access policy against it. Search for the name you provided to your function app, select it and click "Add" to create the access policy.
 
-![Create Certificate](/assets/posts/20210302-02/KeyVAultAccessPolicy.png){:class="img-responsive"}
+![KeyVault Access Policy](/assets/posts/20210302-02/KeyVAultAccessPolicy.png){:class="img-responsive"}
 
-Don't forget to hit the save button under your access policies to apply the access policies against your KeyVault.
+*Don't forget to hit the save button under your access policies to apply the access policies against your KeyVault.*
 
-Until now, we prepared our Azure environment to be able to use certificate authentication against Exchange Online. We finally can now start configuring an Azure function to authenticate against Exchange Online. The first item on our list is creating a function and loading the necessary modules. So we need to head over to our function Azure Portal > Resource Groups > YourResourceGroupName > YourAzureFunctionName >  Functions. Here we add a new function and select the "HTTP" trigger template, provide a name and select "Function" as "Authorization level":
+Until now, we prepared our Azure environment to be able to use certificate authentication against Exchange Online. We finally can now start configuring an Azure function that is able to authenticate against Exchange Online. The first item on our list is creating a function and loading the necessary modules. So we need to head over to our function app Azure Portal > Resource Groups > YourResourceGroupName > YourAzureFunctionName >  Functions. Here we add a new function and select the "HTTP" trigger template, provide a name and select "Function" as "Authorization level":
 
-![Create Certificate](/assets/posts/20210302-02/AZFunction-HttpTrigger.png){:class="img-responsive"}
+![HttpTrigger](/assets/posts/20210302-02/AZFunction-HttpTrigger.png){:class="img-responsive"}
 
-Before we jump into the code of the function, we need to modify the functions dependencies and enlists which modules need to be loaded into the Azure Function. Through the portal, we need to do this with the "App Service Editor" which is currently in preview. You can find this under Azure Portal > Resource Groups > YourResourceGroupName > YourAzureFunctionName > App Service Editor (under Development Tools). Click the "Go" button to open the editor:
+*Note: for a production function, an HttpTrigger does not make much sense and a schedule makes more sense. However, for demo purposes a HttpTrigger is much easier to test*
 
-![Create Certificate](/assets/posts/20210302-02/AppServiceEditor.png){:class="img-responsive"}
+Before we jump into the code of the function, we need to modify the functions dependencies and configure which modules need to be loaded into the function. Through the portal, we need to do this with the "App Service Editor" which is currently in preview. You can find this under Azure Portal > Resource Groups > YourResourceGroupName > YourAzureFunctionName > App Service Editor (under Development Tools). Click the "Go" button to open the editor:
 
-Select the "requirements.psd1" file which contains the dependencies for the Azure Function. In this file, we need to add the "ExchangeOnlineManagent" version 2.0.4 module and set the AZ module to 5.5.0. Your "requirements.psd1" file should look like this now:
+![App Service Editor](/assets/posts/20210302-02/AppServiceEditor.png){:class="img-responsive"}
+
+On the left hand side, you will have a file selection window. Select the "requirements.psd1" file which contains the dependencies for the Azure Function. In this file, we need to add the "ExchangeOnlineManagent" version 2.0.4 module and set the AZ module to 5.5.0. Your "requirements.psd1" file should look like this now:
 
 ```
 @{
@@ -128,16 +125,17 @@ Select the "requirements.psd1" file which contains the dependencies for the Azur
 ```
 *Note: I fixed the versions to ensure that when new versions are released, we don't potentially automatically break our functions when the modules are updated to the latest versions.* 
 
-Azure functions won't automatically manage dependencies enlisted in the requirements file and ignores the file, we therefore need to enable the Managed dependency feature inside the host.json file.  Open the file with the App Service Editor and ensure that "Enabled" is set to "true" under the managedDependency key:
+Azure functions won't automatically manage dependencies enlisted in the requirements file and ignores the file by default, we therefore need to enable the Managed dependency feature inside the host.json file.  Open the file with the App Service Editor and ensure that "Enabled" is set to "true" under the managedDependency key:
+
 ```
   "managedDependency": {
     "Enabled": true
   }
 ```
 
-During runtime of the the PowerShell function, you must download and temporary store the private key so that you can proof your identity against Exchange Online. This happens using a "System.Security.Cryptography.X509Certificates.X509Certificate2" object, which will store the private key under the user profile. An Azure function by default does not load the user profile during runtime for performance reasons. To avoid file not found errors in our code, we must configure the Azure function to load the user profile by configuring the WEBSITE_LOAD_USER profile application setting. You can add this under Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Configuration (under Settings) > Tab Application Settings by clicking the 'New application setting' button. Here you provide the 'WEBSITE_LOAD_USER_PROFILE' name and set the value to '1', confirm by clicking 'OK' and save your new application settings:
+During runtime of the the PowerShell function, the private key is retreived from our KeyVault and is temporary stored. This happens using a "System.Security.Cryptography.X509Certificates.X509Certificate2" object, which will store the private key under the user profile. An Azure function by default does not load the user profile during runtime for performance reasons. To avoid file not found errors in our code, we must configure the function to load the user profile by configuring the WEBSITE_LOAD_USER profile application setting. You can add an application key under Azure Admin Portal > Resource Groups > YourResourceGroup > YourFunctionAppName > Configuration (under Settings) > Tab Application Settings by clicking the 'New application setting' button. Here you provide the 'WEBSITE_LOAD_USER_PROFILE' name and set the value to '1', confirm by clicking 'OK' and save your new application settings:
 
-![Create Certificate](/assets/posts/20210302-02/AZFunction-LoadUserProfile.png){:class="img-responsive"}
+![Load User Profile](/assets/posts/20210302-02/AZFunction-LoadUserProfile.png){:class="img-responsive"}
 
 We are now ready to put some code inside the Azure Function and do a first test run in retrieving data. So head over to your Azure Function via Azure Portal > Resource Groups > YourResourceGroupName > YourAzureFunctionName > Functions > YourHttpTriggerName > Code + Test. Here you can paste in the following code:
 
@@ -186,12 +184,11 @@ Inside the code we do the following actions:
 7. Disconnect from Exchange Online, we can only have 3 simultaneous sessions so we need to properly disconnect.
 8. Add the mailbox list towards the Azure's Function response
 
-
 When you test the function, you should have the output of get-mailbox as a JSON object in your output:
 
-![Create Certificate](/assets/posts/20210302-02/AZFunction-Output.png){:class="img-responsive"}
+![Function Output](/assets/posts/20210302-02/AZFunction-Output.png){:class="img-responsive"}
 
-In the example above we have hard coded variables, this should be avoided at all cost. So let's clean up our code and define our variables as application settings:
+In the example above we have hard coded variables, this should be avoided at all cost so that we can re-use the code without doing modification and to avoid that sensitive data is visible in plain text. So let's clean up our code and define our variables as application settings:
 
 | Application Setting | Description |
 | ----------- | ----------- |
@@ -200,7 +197,7 @@ In the example above we have hard coded variables, this should be avoided at all
 | EXO_AzureADAppID | your application ID in Azure Active Directory |
 | EXO_OrgID | your Exchange Online organization ID 'tenantName.onmicrosoft.com' |
 
-These application settings are available inside our PowerShell function as environmental variables and can be used by calling adding $env:ApplicationSettingID in our code. This results in the following final code:
+These application settings are available inside our PowerShell function as environmental variables and can be used by calling $env:ApplicationSettingID in our code. This results in the following final code:
 
 ```
 using namespace System.Net
@@ -235,14 +232,6 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
 })
 ```
 
+## Conclusion
 
-
-
-
-
-
-# Conclusion
-
-Todo 
-
-Update on MD file
+Altough Azure Functions support loading certificates directly from Key Vault, you still need to configure the certificate thumbprint as a variable or hard code it inside your function. This would imply that when you rotate the certificate inside your KeyVault, you need to make an update to your Azure Function to make it work again. Using the method above, you don't need to know the certificate thumbprint and when the certificate is rotated the code will always use the latest version of certificate without the need to update code. 
