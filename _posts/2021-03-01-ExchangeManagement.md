@@ -1,11 +1,11 @@
 ---
 layout: post
-title: Azure Function: using a KeyVault certificate to authenticate towards Exchange Online
+title: "Azure Function: using a KeyVault certificate to authenticate towards Exchange Online"
 excerpt: "In this post, I explain how you can configure a PowerShell based Azure Function to retreive a certificate stored in Azure KeyVault and use it to authenticate with the Exchange Online Management V2 module"
 date: 2021-03-09
 ---
 
-Now that certificate based authentication in Exchange Online management shell reached a certain maturity level, let's have a look how we can leverage dynamic retreival of a certificate from an Azure KeyVault and use it inside an Azure PowerShell function to connect towards Exchange Online to do some automated tasks. This article outlines the setup and discusses some caveats I encountered during the deployment in my lab environment.
+Now that certificate based authentication in Exchange Online management shell reached a certain maturity level, let's have a look how we can leverage dynamic retreival of a certificate from an Azure KeyVault and use it inside an Azure PowerShell function to connect towards Exchange Online to do some automated tasks. This article outlines the setup and configuration of the different components.
 
 Before we dive into the Azure Function, we first need to ensure that all the required components are configured in our environment. This means that we need to have an Azure KeyVault and an app registration inside Azure Active Directory before we can test out inside our Azure Function. *Note: some parts in this article are done using Azure CLI while others are executed manually.*
 
@@ -77,7 +77,7 @@ We now finally can switch our attentention towards the subject of this blog post
 az storage account create -n savddesignlabexchfa1234 -g RG-AzureFunctionDemo -l westeurope --sku Standard_LRS
 
 # Create Function App
-az functionapp create --consumption-plan-location westeurope --name FA-VddesignlabExchFA1234 --os-type Windows --resource-group RG-AzureFunctionDemo --runtime powershell --storage-account savddesignlabexchfa1234 --functions-version 3
+az functionapp create --consumption-plan-location westeurope --name FA-VddesignlabExchFA1234 --os-type Windows --resource-group RG-AzureFunctionDemo --runtime powershell --storage-account savddesignlabexchfa1234 --functions-version 3 --disable-app-insights
 ```
 *With the above commands, we create a storage account in Western Europe an a Function App version 3 that runs PowerShell Core*
 
@@ -115,12 +115,13 @@ Before we jump into the code of the function, we need to modify the functions de
 
 ![App Service Editor](/assets/posts/20210302-02/AppServiceEditor.png){:class="img-responsive"}
 
-On the left hand side, you will have a file selection window. Select the "requirements.psd1" file which contains the dependencies for the Azure Function. In this file, we need to add the "ExchangeOnlineManagent" version 2.0.4 module and set the AZ module to 5.5.0. Your "requirements.psd1" file should look like this now:
+On the left hand side, you will have a file selection window. Select the "requirements.psd1" file which contains the dependencies for the Azure Function. In this file, we need to add the "ExchangeOnlineManagent" version 2.0.4 module, Az.KeyVault version 3.4.0 and Az.Accounts version 2.2.6 (latest versions at time of writing). Your "requirements.psd1" file should look like this now:
 
 ```
 @{
     'ExchangeOnlineManagement' = '2.0.4'
-    'az' = '5.5.0'
+    'Az.KeyVault' = '3.4.0'
+    'Az.Accounts' = '2.2.6'
 }
 ```
 *Note: I fixed the versions to ensure that when new versions are released, we don't potentially automatically break our functions when the modules are updated to the latest versions.* 
@@ -234,4 +235,8 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
 
 ## Conclusion
 
-Altough Azure Functions support loading certificates directly from Key Vault, you still need to configure the certificate thumbprint as a variable or hard code it inside your function. This would imply that when you rotate the certificate inside your KeyVault, you need to make an update to your Azure Function to make it work again. Using the method above, you don't need to know the certificate thumbprint and when the certificate is rotated the code will always use the latest version of certificate without the need to update code. 
+The code above is just a simple function that retreives some data in Exchange Online, however you can use it as a base to establish the connection and do some very fancy stuff inside Exchange Online in full unattended script. 
+
+It's important to highlight that the implementation above is another approach in loading certificates in Azure functions. Azure functions have the possibility to import key vault certificates via the 'TLS/SSL settings' pane, with this method you need to specify which certificate thumprint you require to authenticate from within your code. When rotating certificates inside KeyVault, the thumbprint changes and this most likely will break your function (I havent' confirmed this yet). The approach above will still function once the the certificate is rotaded, altough you also must update your Azure AD app public certificate portion (which also can be automated).
+
+I hope you find this post usefull and don't hesitate to reach out to me with comments or feedback.
