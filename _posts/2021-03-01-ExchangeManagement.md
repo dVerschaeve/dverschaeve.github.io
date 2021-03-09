@@ -235,7 +235,7 @@ Push-OutputBinding -Name Response -Value ([HttpResponseContext]@{
 
 ## Conclusion
 
-The code above is just a simple function that retreives some data in Exchange Online, however you can use it as a base to establish the connection and do some very fancy stuff inside Exchange Online in full unattended script. 
+The code above is just a simple function that retreives some data in Exchange Online, however you can use it as a base to establish the connection and do some very fancy stuff inside Exchange Online in full unattended scripts. 
 
 It's important to highlight that the implementation above is another approach in loading certificates in Azure functions. Azure functions have the possibility to import key vault certificates via the 'TLS/SSL settings' pane, with this method you need to specify which certificate thumprint you require to authenticate from within your code. When rotating certificates inside KeyVault, the thumbprint changes and this most likely will break your function (I havent' confirmed this yet). The approach above will still function once the the certificate is rotaded, altough you also must update your Azure AD app public certificate portion (which also can be automated).
 
