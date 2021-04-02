@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Bash: Azure CLI Azure AD role assignments"
-excerpt: "Using Azure CLI in bash to add Azure AD role assignments"
+excerpt: "Using Azure CLI in bash to add and remove Azure AD role assignments"
 date: 2021-04-02
 ---
 
