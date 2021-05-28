@@ -69,8 +69,8 @@ sidebar:
 career-profile:
     title: Career Profile
     summary: |
-      I'm an eager to learn solution architect specialized in cloud technologies working for Hewlett Packard Enterprise. 
-      During my career at HPE, I worked on several large projects that allowed me to grow towards an architect role. 
+      I'm an eager to learn solution architect specialized in cloud technologies. 
+      During my career, I worked on several large projects that allowed me to grow towards an architect role. 
 
       Implementing cloud services is a popular trend on the current market where companies often encounter unforeseen challenges and pitfalls. Guiding and acting as a trusted advisor allows me to help customers in their journey towards a successful implementation of cloud technologies.
 
@@ -83,7 +83,7 @@ education:
         
 experiences:
     - role: Solution Architect
-      time: Feb 2014 - Present
+      time: Feb 2014 - May 2021
       company: Hewlett Packard Enterprise
       details: |
         Technology Consultant focusing on cloud technologies such as Microsoft 365, Azure Active Directory and Microsoft Azure.
