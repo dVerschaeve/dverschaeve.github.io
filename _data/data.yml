@@ -82,6 +82,12 @@ education:
       details: |
         
 experiences:
+    - role: Sr. Microsoft 365 Consultant 
+      time: Jun 2021 - Present
+      company: The Collective Consulting
+      details: |
+        Consultant working on automation projects, Microsoft 365 projects and Azure projects
+
     - role: Solution Architect
       time: Feb 2014 - May 2021
       company: Hewlett Packard Enterprise
