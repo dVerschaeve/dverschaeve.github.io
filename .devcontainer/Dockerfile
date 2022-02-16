@@ -9,6 +9,6 @@ ENV LANG=en_US.UTF-8 \
 
 COPY deploy/*.sh /tmp/deploy/
 
-RUN apt-get update \
-   && /bin/bash /tmp/deploy/git.sh \
-   && /bin/bash /tmp/deploy/jekyll.sh
+RUN apt-get update
+RUN /bin/bash /tmp/deploy/git.sh
+RUN /bin/bash /tmp/deploy/jekyll.sh
