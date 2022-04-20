@@ -128,7 +128,7 @@ projects:
     detailed:
         - role: "Solution architect"
           sector: "Telecommunications"
-          period: "From 06/2020 -  Current"
+          period: "From 06/2020 -  May 2021"
           scope: 
             - Lead technical design workshops
             - Design Microsoft Teams Tenant and conferencing
@@ -141,7 +141,7 @@ projects:
             - Successfully proposed Teams native equipment to replace their rented CISCO ISV equipment.
         - role: "Solution architect"
           sector: "Financial sector"
-          period: "From 02/2019 - Current"
+          period: "From 02/2019 - May 2021"
           scope: 
             - Design Microsoft 365 core components
             - Design on-premises Exchange 2016 in hybrid mode with Exchange Online
@@ -216,7 +216,7 @@ skills:
         level: 95%
 
       - name: Azure Architecture & Services
-        level: 75%
+        level: 85%
 
       - name: Identity and Access management  
         level: 80%
